@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Lolo 🌹</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D0D1A;--rose:#C9847A;--cream:#FFF0EC;--gold:#F5D78E;
+  --soft:rgba(201,132,122,0.15);--dark-rose:#a05e55;
+}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'Lato',sans-serif;color:var(--cream);overflow:hidden;user-select:none}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:28px;z-index:10;opacity:0;pointer-events:none;transition:opacity .7s ease;text-align:center}
+.screen.active{opacity:1;pointer-events:all}
+
+/* ── TYPOGRAPHY ── */
+h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,8vw,3.8rem);color:var(--gold);line-height:1.15;letter-spacing:.02em}
+h1 em{color:var(--rose);font-style:italic}
+h2{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,5vw,2.2rem);color:var(--cream);font-style:italic}
+p.sub{font-size:clamp(.85rem,2.5vw,1.05rem);color:rgba(255,240,236,.6);font-weight:300;max-width:380px;line-height:1.7}
+.ribbon{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,215,142,.5);margin-bottom:-8px}
+.divider{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* ── BUTTONS ── */
+.btn{margin-top:4px;padding:13px 38px;border-radius:50px;border:1.5px solid var(--rose);background:transparent;color:var(--cream);font-family:'Lato',sans-serif;font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s}
+.btn:hover{background:var(--soft);transform:scale(1.04)}
+.btn.primary{background:var(--rose);border-color:var(--rose);color:var(--bg);font-weight:700}
+.btn.primary:hover{background:#d9958b;transform:scale(1.05)}
+
+/* ══════════════════════════════════
+   SCREEN 0 — ENVELOPE
+══════════════════════════════════ */
+#s0{gap:0}
+.envelope-wrap{position:relative;width:220px;height:160px;cursor:pointer;perspective:800px}
+.envelope-wrap:hover .env-flap{transform:rotateX(-160deg)}
+.env-body{position:absolute;bottom:0;width:220px;height:140px;background:linear-gradient(160deg,#1e0f18,#2a1020);border-radius:4px 4px 10px 10px;border:1.5px solid rgba(201,132,122,.35);overflow:hidden}
+.env-body::before,.env-body::after{content:'';position:absolute;border:70px solid transparent}
+.env-body::before{bottom:0;left:0;border-bottom-color:rgba(201,132,122,.12);border-left-color:rgba(201,132,122,.12)}
+.env-body::after{bottom:0;right:0;border-bottom-color:rgba(201,132,122,.12);border-right-color:rgba(201,132,122,.12)}
+.env-heart{position:absolute;top:50%;left:50%;transform:translate(-50%,-44%);font-size:2.6rem;animation:pulse 1.6s ease-in-out infinite}
+.env-flap{position:absolute;top:0;left:0;width:220px;height:0;border-left:110px solid transparent;border-right:110px solid transparent;border-top:90px solid #2a1020;transform-origin:top center;transition:transform .6s cubic-bezier(.4,0,.2,1);z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.env-flap::after{content:'';position:absolute;top:-90px;left:-110px;border-left:110px solid transparent;border-right:110px solid transparent;border-top:90px solid rgba(201,132,122,.2)}
+.env-hint{font-size:.7rem;letter-spacing:.18em;color:rgba(245,215,142,.45);text-transform:uppercase;margin-top:16px;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ══════════════════════════════════
+   SCREEN COUNTDOWN — waiting screen
+══════════════════════════════════ */
+#s-wait{background:var(--bg)}
+.countdown-grid{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.cd-box{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cd-num{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,9vw,3.8rem);color:var(--gold);line-height:1;min-width:72px;text-align:center;background:rgba(255,240,236,.05);border:1px solid rgba(201,132,122,.2);border-radius:12px;padding:10px 8px}
+.cd-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,132,122,.7)}
+
+/* ══════════════════════════════════
+   SCREEN 1 — I Love You
+══════════════════════════════════ */
+/* ══════════════════════════════════
+   SCREEN PRE — 3-2-1 Countdown
+══════════════════════════════════ */
+#s-pre{gap:0}
+.pre-number{font-family:'Playfair Display',serif;font-size:clamp(5rem,22vw,10rem);color:var(--gold);animation:popIn .5s ease forwards}
+@keyframes popIn{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+/* ══════════════════════════════════
+   SCREEN 3 — Choices
+══════════════════════════════════ */
+.choices-wrap{display:flex;flex-direction:column;gap:18px;width:100%;max-width:480px}
+.choice-group label.group-title{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
+.cards{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.card{padding:10px 20px;border-radius:50px;border:1.5px solid rgba(201,132,122,.4);background:rgba(255,240,236,.04);color:var(--cream);font-size:.92rem;cursor:pointer;transition:all .25s;position:relative}
+.card:hover{border-color:var(--rose);background:var(--soft)}
+.card.selected{background:var(--rose);border-color:var(--rose);color:var(--bg);font-weight:700}
+.card .tick{display:none;position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--gold);border-radius:50%;font-size:10px;line-height:18px;text-align:center;color:var(--bg);font-weight:900}
+.card.selected .tick{display:block}
+
+/* ══════════════════════════════════
+   SCREEN 4 — Confirmation
+══════════════════════════════════ */
+.summary-box{background:rgba(255,240,236,.06);border:1px solid rgba(201,132,122,.25);border-radius:18px;padding:20px 28px;max-width:340px;width:100%;text-align:left}
+.summary-box .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.9rem}
+.summary-box .row:last-child{border-bottom:none}
+.summary-box .row span:first-child{color:var(--gold);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
+.summary-box .row span:last-child{color:var(--cream);font-weight:700}
+.save-btn{display:flex;align-items:center;gap:8px;padding:11px 28px;border-radius:50px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);font-family:'Lato',sans-serif;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.save-btn:hover{background:rgba(245,215,142,.12)}
+
+/* ── PERSONAL MESSAGE BOX ── */
+.msg-wrap{width:100%;max-width:440px}
+.msg-wrap textarea{width:100%;background:rgba(255,240,236,.05);border:1.5px solid rgba(201,132,122,.3);border-radius:14px;padding:14px 18px;color:var(--cream);font-family:'Lato',sans-serif;font-size:.92rem;resize:none;outline:none;transition:border-color .3s;line-height:1.6}
+.msg-wrap textarea::placeholder{color:rgba(255,240,236,.3)}
+.msg-wrap textarea:focus{border-color:var(--rose)}
+.msg-label{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;text-align:left}
+
+/* ── ANIMATIONS ── */
+.burst-heart{font-size:clamp(3rem,12vw,5.5rem);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ── CONFETTI CANVAS ── */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:0;transition:opacity .3s}
+#confetti.show{opacity:1}
+
+/* ── OVERLAY ── */
+#overlay{position:fixed;inset:0;background:var(--bg);z-index:100;opacity:0;pointer-events:none;transition:opacity .35s}
+#overlay.flash{opacity:1}
+
+/* ── MOBILE TWEAKS ── */
+@media(max-height:650px){
+  h1{font-size:clamp(1.6rem,6vw,2.6rem)}
+  .choices-wrap{gap:12px}
+  .countdown-grid{gap:10px}
+  .cd-num{font-size:clamp(1.8rem,7vw,2.8rem);padding:8px 6px;min-width:58px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<canvas id="confetti"></canvas>
+<div id="overlay"></div>
+
+<!-- ══ WAITING COUNTDOWN ══ -->
+<section class="screen" id="s-wait">
+  <div class="ribbon">something special is coming ✦</div>
+  <h1 style="font-size:clamp(1.5rem,6vw,2.8rem)">A surprise is<br><em>on its way</em> 🌹</h1>
+  <div class="divider"></div>
+  <p class="sub">Hold on just a little longer…<br>This page unlocks on her birthday.</p>
+  <div class="countdown-grid">
+    <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label">Days</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-label">Hours</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-label">Mins</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-label">Secs</div></div>
+  </div>
+  <p class="sub" style="font-size:.78rem;margin-top:-4px">June 15, 2026 🎂</p>
+</section>
+
+<!-- ══ 3-2-1 PRE-SCREEN ══ -->
+<section class="screen" id="s-pre">
+  <div class="pre-number" id="pre-num">3</div>
+</section>
+
+<!-- ══ SCREEN 0 — ENVELOPE ══ -->
+<section class="screen" id="s0">
+  <div class="ribbon">tap to open ✦</div>
+  <div class="envelope-wrap" onclick="openEnvelope()" title="Tap me!">
+    <div class="env-body">
+      <div class="env-heart">💌</div>
+    </div>
+    <div class="env-flap" id="env-flap"></div>
+  </div>
+  <p class="env-hint">tap the envelope</p>
+</section>
+
+<!-- ══ SCREEN 1 — I LOVE YOU ══ -->
+<section class="screen" id="s1">
+  <div class="ribbon">a little something for you ✦</div>
+  <h1>I <em>Love</em> You,<br>Lolo 🌹</h1>
+  <div class="divider"></div>
+  <p class="sub">Close your eyes for a second… now open them. This is just the beginning.</p>
+  <button class="btn primary" onclick="go('s2')">Next →</button>
+</section>
+
+<!-- ══ SCREEN 2 — HAPPY BIRTHDAY ══ -->
+<section class="screen" id="s2">
+  <div class="burst-heart">🎂</div>
+  <h1>Happy Birthday,<br><em>Roh Alby</em> ❤️</h1>
+  <div class="divider"></div>
+  <p class="sub">Every year with you is a gift I never want to return. Today is all yours — let's make it perfect.</p>
+  <button class="btn primary" onclick="go('s3')">Plan Our Day →</button>
+</section>
+
+<!-- ══ SCREEN 3 — CHOICES ══ -->
+<section class="screen" id="s3">
+  <h2>What does your heart want?</h2>
+  <div class="choices-wrap">
+    <div class="choice-group">
+      <label class="group-title">🍽 Where shall we eat?</label>
+      <div class="cards">
+        <div class="card" data-group="food" data-val="Kazlak" onclick="pick(this)">Kazlak<span class="tick">✓</span></div>
+        <div class="card" data-group="food" data-val="Sizzler" onclick="pick(this)">Sizzler<span class="tick">✓</span></div>
+        <div class="card" data-group="food" data-val="Abu Ramy" onclick="pick(this)">Abu Ramy<span class="tick">✓</span></div>
+        <div class="card" data-group="food" data-val="Evora" onclick="pick(this)">Evora<span class="tick">✓</span></div>
+        <div class="card" data-group="food" data-val="Sushi 🍣" onclick="pick(this)">Sushi 🍣<span class="tick">✓</span></div>
+        <div class="card" data-group="food" data-val="Camel Meat 🐪" onclick="pick(this)">Camel Meat 🐪<span class="tick">✓</span></div>
+      </div>
+    </div>
+    <div class="choice-group">
+      <label class="group-title">🎉 What's the vibe?</label>
+      <div class="cards">
+        <div class="card" data-group="activity" data-val="Cinema 🎬" onclick="pick(this)">Cinema 🎬<span class="tick">✓</span></div>
+        <div class="card" data-group="activity" data-val="Play & Games 🎮" onclick="pick(this)">Play & Games 🎮<span class="tick">✓</span></div>
+        <div class="card" data-group="activity" data-val="Escape Room 🔐" onclick="pick(this)">Escape Room 🔐<span class="tick">✓</span></div>
+      </div>
+    </div>
+    <div class="msg-wrap">
+      <div class="msg-label">💌 Leave a note for him</div>
+      <textarea id="personal-msg" rows="2" placeholder="Type something sweet… أو بالعربي كمان 🌹"></textarea>
+    </div>
+  </div>
+  <button class="btn primary" id="go-btn" onclick="confirmChoices()" style="opacity:.4;pointer-events:none;margin-top:4px">Let's Go! 🎊</button>
+</section>
+
+<!-- ══ SCREEN 4 — CONFIRMATION ══ -->
+<section class="screen" id="s4">
+  <div style="font-size:2.8rem">🥳</div>
+  <h2>It's a date, Lolo!</h2>
+  <div class="summary-box" id="summary-box"></div>
+  <button class="save-btn" onclick="saveImage()">📸 Save My Choices</button>
+  <button class="btn" onclick="restart()" style="margin-top:-8px;font-size:.8rem">← Start Over</button>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+/* ════════════════════════════════════
+   DATE GATE
+   Opens: June 15 2025 at 00:00 (Cairo = UTC+3)
+   But we unlock on June 14 after 12:00 midnight = June 15 00:00 UTC+3
+   So unlock = June 14 21:00 UTC = June 15 00:00 Cairo
+════════════════════════════════════ */
+const UNLOCK_UTC = new Date("2026-06-14T21:00:00Z");
+
+function isUnlocked(){
+  return new Date() >= UNLOCK_UTC;
+}
+
+/* ── countdown tick ── */
+function updateCountdown(){
+  const diff = UNLOCK_UTC - new Date();
+  if(diff <= 0){ startExperience(); return; }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  if(isUnlocked()){
+    startExperience();
+  } else {
+    showScreen('s-wait');
+    updateCountdown();
+    setInterval(()=>{
+      updateCountdown();
+      if(isUnlocked()) startExperience();
+    }, 1000);
+  }
+});
+
+function startExperience(){
+  clearInterval();
+  runPreCountdown();
+}
+
+/* ════════════════════════════════════
+   3-2-1 PRE COUNTDOWN
+════════════════════════════════════ */
+function runPreCountdown(){
+  showScreen('s-pre');
+  const el = document.getElementById('pre-num');
+  const steps = ['3','2','1','🌹❤️'];
+  let i = 0;
+  function tick(){
+    el.style.animation='none';
+    el.offsetHeight; // reflow
+    el.style.animation='popIn .5s ease forwards';
+    el.textContent = steps[i];
+    i++;
+    if(i < steps.length){ setTimeout(tick, 900); }
+    else { setTimeout(()=> go('s0'), 900); }
+  }
+  tick();
+}
+
+/* ════════════════════════════════════
+   PARTICLES
+════════════════════════════════════ */
+const canvas = document.getElementById('particles');
+const ctx    = canvas.getContext('2d');
+let W, H, parts = [];
+const SYMS = ['♥','✦','·','*','✿','❤'];
+
+function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+function rp(){
+  return { x:Math.random()*W, y:Math.random()*H+H,
+    vy:-(0.3+Math.random()*.7), vx:(Math.random()-.5)*.4,
+    size:8+Math.random()*13, alpha:.12+Math.random()*.4,
+    sym:SYMS[Math.floor(Math.random()*SYMS.length)],
+    hue:Math.random()<.6?'#C9847A':'#F5D78E' };
+}
+for(let i=0;i<55;i++){ let p=rp(); p.y=Math.random()*H; parts.push(p); }
+
+(function loop(){
+  ctx.clearRect(0,0,W,H);
+  parts.forEach(p=>{
+    ctx.globalAlpha=p.alpha; ctx.fillStyle=p.hue;
+    ctx.font=`${p.size}px serif`; ctx.fillText(p.sym,p.x,p.y);
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.y<-20){ Object.assign(p,rp()); }
+  });
+  ctx.globalAlpha=1;
+  requestAnimationFrame(loop);
+})();
+
+function spawnBurst(){
+  for(let i=0;i<25;i++){
+    let p=rp(); p.y=H*.5; p.x=W*.5;
+    p.vx=(Math.random()-.5)*3.5; p.vy=-(1+Math.random()*2.5);
+    p.alpha=.75; parts.push(p);
+  }
+}
+
+/* ════════════════════════════════════
+   SCREEN MANAGEMENT
+════════════════════════════════════ */
+let current = null;
+const overlay = document.getElementById('overlay');
+
+function showScreen(id){
+  if(current) document.getElementById(current).classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  current = id;
+}
+
+function go(id){
+  overlay.classList.add('flash');
+  setTimeout(()=>{
+    showScreen(id);
+    overlay.classList.remove('flash');
+    if(id==='s2') spawnBurst();
+  }, 350);
+}
+
+/* ════════════════════════════════════
+   ENVELOPE OPEN
+════════════════════════════════════ */
+function openEnvelope(){
+  const flap = document.getElementById('env-flap');
+  flap.style.transform = 'rotateX(-160deg)';
+  setTimeout(()=> go('s1'), 700);
+}
+
+/* ════════════════════════════════════
+   CARD SELECTION
+════════════════════════════════════ */
+const sel = { food:null, activity:null };
+
+function pick(el){
+  const g = el.dataset.group;
+  document.querySelectorAll(`.card[data-group="${g}"]`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  sel[g] = el.dataset.val;
+  checkReady();
+}
+
+function checkReady(){
+  const btn = document.getElementById('go-btn');
+  if(sel.food && sel.activity){
+    btn.style.opacity='1'; btn.style.pointerEvents='auto';
+  }
+}
+
+/* ════════════════════════════════════
+   CONFETTI
+════════════════════════════════════ */
+const cc = document.getElementById('confetti');
+const cx = cc.getContext('2d');
+let confettiPieces = [];
+
+function launchConfetti(){
+  cc.width=innerWidth; cc.height=innerHeight;
+  cc.classList.add('show');
+  confettiPieces = [];
+  const colors=['#C9847A','#F5D78E','#FFF0EC','#ff9fc8','#b8f0c8','#9ecfff'];
+  for(let i=0;i<180;i++){
+    confettiPieces.push({
+      x:Math.random()*innerWidth, y:-10-Math.random()*200,
+      r:4+Math.random()*6, d:Math.random()*180,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      tilt:Math.floor(Math.random()*10)-10,
+      tiltAngle:0, tiltSpeed:.1+Math.random()*.15,
+      vy:2+Math.random()*4, vx:(Math.random()-.5)*2.5
+    });
+  }
+  animateConfetti(0);
+}
+
+function animateConfetti(frame){
+  if(frame > 200){ cc.classList.remove('show'); return; }
+  cx.clearRect(0,0,cc.width,cc.height);
+  confettiPieces.forEach(p=>{
+    p.tiltAngle += p.tiltSpeed;
+    p.y += p.vy; p.x += p.vx;
+    p.tilt = Math.sin(p.tiltAngle)*12;
+    cx.beginPath(); cx.lineWidth=p.r;
+    cx.strokeStyle=p.color;
+    cx.moveTo(p.x+p.tilt+p.r/2, p.y);
+    cx.lineTo(p.x+p.tilt, p.y+p.tilt+p.r/2);
+    cx.stroke();
+  });
+  requestAnimationFrame(()=> animateConfetti(frame+1));
+}
+
+/* ════════════════════════════════════
+   CONFIRM
+════════════════════════════════════ */
+function confirmChoices(){
+  const msg = document.getElementById('personal-msg').value.trim();
+  const now = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const box = document.getElementById('summary-box');
+  let rows = `
+    <div class="row"><span>Date</span><span>${now}</span></div>
+    <div class="row"><span>Restaurant</span><span>${sel.food}</span></div>
+    <div class="row"><span>Activity</span><span>${sel.activity}</span></div>
+    <div class="row"><span>With</span><span>Kareem 🌹</span></div>`;
+  if(msg) rows += `<div class="row" style="flex-direction:column;align-items:flex-start;gap:4px"><span>Her Note</span><span style="font-size:.88rem;line-height:1.5;color:rgba(255,240,236,.85)">${msg}</span></div>`;
+  box.innerHTML = rows;
+
+  launchConfetti();
+  saveToStorage(msg);
+
+  setTimeout(()=> go('s4'), 800);
+}
+
+/* ════════════════════════════════════
+   SAVE TO LOCALSTORAGE
+════════════════════════════════════ */
+function saveToStorage(msg){
+  const entry={ date:new Date().toISOString(), food:sel.food, activity:sel.activity, note:msg||'' };
+  let log = JSON.parse(localStorage.getItem('lolo_bday')||'[]');
+  log.push(entry); localStorage.setItem('lolo_bday', JSON.stringify(log));
+}
+
+/* ════════════════════════════════════
+   SAVE IMAGE (html2canvas)
+════════════════════════════════════ */
+function saveImage(){
+  const box = document.getElementById('summary-box');
+  html2canvas(box,{ backgroundColor:'#0D0D1A', scale:2 }).then(c=>{
+    const a=document.createElement('a');
+    a.download='lolo-birthday-plan.png';
+    a.href=c.toDataURL(); a.click();
+  });
+}
+
+/* ════════════════════════════════════
+   RESTART
+════════════════════════════════════ */
+function restart(){
+  sel.food=null; sel.activity=null;
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('personal-msg').value='';
+  document.getElementById('go-btn').style.opacity='.4';
+  document.getElementById('go-btn').style.pointerEvents='none';
+  go('s0');
+}
+</script>
+</body>
+</html>
